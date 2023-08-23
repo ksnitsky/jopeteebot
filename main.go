@@ -1,16 +1,32 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	"net/http"
-	"time"
+
+	"github.com/joho/godotenv"
+	"github.com/labstack/echo/v4"
 )
 
-func greet(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hello World! %s", time.Now())
+func init() {
+	err := godotenv.Load()
+
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
+// TODO:
+//  - longpoling to a /getUpdates to receive messages
 func main() {
-	http.HandleFunc("/", greet)
-	http.ListenAndServe(":8080", nil)
+	e := echo.New()
+
+	// accessToken := os.Getenv("TELEGRAM_BOT_ACCESS_TOKEN")
+	// requestUri := fmt.Sprintf("https://api.telegram.org/bot%s/%s", accessToken, "sendMessage")
+
+	e.GET("/", func(c echo.Context) error {
+		return c.String(http.StatusOK, "HELLOWORLD")
+	})
+
+	e.Logger.Fatal(e.Start(":3000"))
 }

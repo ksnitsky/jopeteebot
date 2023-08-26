@@ -1,15 +1,33 @@
-package controllers
+package handlers
 
 import (
 	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
 	"os"
-	"strings"
 
 	m "github.com/ksnitsky/jopeteebot/src/models"
+	"github.com/labstack/echo"
 )
+
+func SendMessageToChatGPT(c echo.Context) (string, error) {
+	message := "Please name 10 Europe capitals"
+
+	req, err := requestToChatGPT(message)
+	if err != nil {
+		return "", err
+	}
+	resp, err := fetchAPI2(req)
+	if err != nil {
+		return "", err
+	}
+	data, err := processGPTResponse(resp)
+	if err != nil {
+		return "", err
+	}
+
+	return data, nil
+}
 
 func requestToChatGPT(message string) (*http.Request, error) {
 	apiKey := os.Getenv("OPENAI_API_TOKEN")
@@ -41,22 +59,13 @@ func requestToChatGPT(message string) (*http.Request, error) {
 	return req, nil
 }
 
-func processResponse(resp *http.Response) (m.GPTResponse, error) {
-	contentType := resp.Header.Get("Content-Type")
-
-	if strings.Contains(contentType, "application/json") {
-		var responseData map[string]interface{}
-		err := json.NewDecoder(resp.Body).Decode(&responseData)
-		if err != nil {
-			return nil, err
-		}
-		return responseData, nil
-	} else {
-		responseBody, err := io.ReadAll(resp.Body)
-		if err != nil {
-			return nil, err
-		}
-		return string(responseBody), nil
+func processGPTResponse(body []byte) (string, error) {
+	var gptResponse m.GPTResponse
+	err := json.Unmarshal(body, &gptResponse)
+	if err != nil {
+		return "", err
 	}
-}
 
+	message := gptResponse.Choices[0].Message.Content
+	return message, nil
+}

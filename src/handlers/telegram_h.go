@@ -1,11 +1,18 @@
-package controllers
+package handlers
 
 import (
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"os"
+
+	"github.com/labstack/echo/v4"
 )
+
+func SendMessageToTgAPI(c *echo.Context) {
+	// chatId := "153576749"
+
+}
 
 func requestToTgAPI(chatId string, message string, function string) (*http.Request, error) {
 	accessToken := os.Getenv("TELEGRAM_BOT_ACCESS_TOKEN")
@@ -30,3 +37,22 @@ func requestToTgAPI(chatId string, message string, function string) (*http.Reque
 
 	return req, nil
 }
+
+// func processTgResponse(resp *http.Response) (string, error) {
+// 	contentType := resp.Header.Get("Content-Type")
+
+// 	if strings.Contains(contentType, "application/json") {
+// 		var responseData map[string]interface{}
+// 		err := json.NewDecoder(resp.Body).Decode(&responseData)
+// 		if err != nil {
+// 			return nil, err
+// 		}
+// 		return responseData, nil
+// 	} else {
+// 		responseBody, err := io.ReadAll(resp.Body)
+// 		if err != nil {
+// 			return nil, err
+// 		}
+// 		return string(responseBody), nil
+// 	}
+// }

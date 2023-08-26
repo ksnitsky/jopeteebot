@@ -5,13 +5,19 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-
-	"github.com/labstack/echo/v4"
 )
 
-func SendMessageToTgAPI(c *echo.Context) {
-	// chatId := "153576749"
+func SendMessageToTgAPI(chatId string, message string) ([]byte, error) {
+	req, err := requestToTgAPI(chatId, message, "sendMessage")
+	if err != nil {
+		return nil, err
+	}
 
+	resp, err := fetchAPI(req)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
 }
 
 func requestToTgAPI(chatId string, message string, function string) (*http.Request, error) {
@@ -37,22 +43,3 @@ func requestToTgAPI(chatId string, message string, function string) (*http.Reque
 
 	return req, nil
 }
-
-// func processTgResponse(resp *http.Response) (string, error) {
-// 	contentType := resp.Header.Get("Content-Type")
-
-// 	if strings.Contains(contentType, "application/json") {
-// 		var responseData map[string]interface{}
-// 		err := json.NewDecoder(resp.Body).Decode(&responseData)
-// 		if err != nil {
-// 			return nil, err
-// 		}
-// 		return responseData, nil
-// 	} else {
-// 		responseBody, err := io.ReadAll(resp.Body)
-// 		if err != nil {
-// 			return nil, err
-// 		}
-// 		return string(responseBody), nil
-// 	}
-// }

@@ -7,17 +7,16 @@ import (
 	"os"
 
 	m "github.com/ksnitsky/jopeteebot/src/models"
-	"github.com/labstack/echo"
 )
 
-func SendMessageToChatGPT(c echo.Context) (string, error) {
-	message := "Please name 10 Europe capitals"
+func SendMessageToChatGPT(message string) (string, error) {
+	// message := "Please name 10 Europe capitals"
 
 	req, err := requestToChatGPT(message)
 	if err != nil {
 		return "", err
 	}
-	resp, err := fetchAPI2(req)
+	resp, err := fetchAPI(req)
 	if err != nil {
 		return "", err
 	}

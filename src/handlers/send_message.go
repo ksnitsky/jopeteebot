@@ -19,17 +19,13 @@ func SendMessage(c echo.Context) error {
 
 	ch := make(chan string)
 
-	// chatGPTreq, err := requestToChatGPT(message)
-	// if err != nil {
-	// 	ch <- fmt.Sprint(err)
-	// }
 	go func() {
 		openAiResponse, err := SendMessageToChatGPT(message)
 		if err != nil {
 			ch <- fmt.Sprint(err)
 			return
 		}
-		// ch <- openAiResponse
+
 		tgAPIResponse, err := SendMessageToTgAPI(chatId, openAiResponse)
 		if err != nil {
 			ch <- fmt.Sprint(err)

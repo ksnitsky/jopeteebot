@@ -6,10 +6,11 @@ import (
 	"net/http"
 	"os"
 
+	tg "github.com/ksnitsky/jopeteebot/src/models/telegram_m"
 	"github.com/labstack/echo/v4"
 )
 
-func SendMessageToTgAPI(chatId string, message string) ([]byte, error) {
+func SendMessageToTgAPI(chatId int64, message string) ([]byte, error) {
 	req, err := requestToTgAPI(chatId, message, "sendMessage")
 	if err != nil {
 		return nil, err
@@ -22,7 +23,7 @@ func SendMessageToTgAPI(chatId string, message string) ([]byte, error) {
 	return resp, nil
 }
 
-func requestToTgAPI(chatId string, message string, function string) (*http.Request, error) {
+func requestToTgAPI(chatId int64, message string, function string) (*http.Request, error) {
 	accessToken := os.Getenv("TELEGRAM_BOT_ACCESS_TOKEN")
 	apiURL := fmt.Sprintf("https://api.telegram.org/bot%s/%s", accessToken, function)
 
@@ -46,6 +47,16 @@ func requestToTgAPI(chatId string, message string, function string) (*http.Reque
 	return req, nil
 }
 
-func GetUpdates(c echo.Context) {
+func GetUpdates(c echo.Context) error {
+	var newTgMessage tg.Update
+	err := c.Bind(&newTgMessage)
+	if err != nil {
+		return err
+	}
 
+	err = SendMessage(newTgMessage.Message.From.ID, newTgMessage.Message.Text)
+	if err != nil {
+		return err
+	}
+	return c.NoContent(http.StatusOK)
 }

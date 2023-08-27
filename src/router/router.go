@@ -25,8 +25,6 @@ func Initialize() *echo.Echo {
 	apiV1RouteGroup := e.Group("api/v1")
 	{
 		apiV1RouteGroup.POST("/getUpdates", handlers.GetUpdates)
-
-		apiV1RouteGroup.POST("/sendMessage", handlers.SendMessage)
 	}
 
 	return e

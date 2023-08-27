@@ -1,5 +1,7 @@
 package models
 
+// TODO: Move it to another package (same as telegram_m)
+
 type GPTResponse struct {
 	ID      string `json:"id"`
 	Object  string `json:"object"`

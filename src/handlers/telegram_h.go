@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+
+	"github.com/labstack/echo/v4"
 )
 
 func SendMessageToTgAPI(chatId string, message string) ([]byte, error) {
@@ -42,4 +44,8 @@ func requestToTgAPI(chatId string, message string, function string) (*http.Reque
 	}
 
 	return req, nil
+}
+
+func GetUpdates(c echo.Context) {
+
 }

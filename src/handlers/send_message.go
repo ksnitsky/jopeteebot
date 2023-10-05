@@ -24,4 +24,3 @@ func SendMessage(chatId int64, message string) error {
 
 	return nil
 }
-

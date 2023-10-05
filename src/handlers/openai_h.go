@@ -5,13 +5,12 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"strings"
 
 	m "github.com/ksnitsky/jopeteebot/src/models"
 )
 
 func SendMessageToChatGPT(message string) (string, error) {
-	// message := "Please name 10 Europe capitals"
-
 	req, err := requestToChatGPT(message)
 	if err != nil {
 		return "", err
@@ -31,6 +30,7 @@ func SendMessageToChatGPT(message string) (string, error) {
 func requestToChatGPT(message string) (*http.Request, error) {
 	apiKey := os.Getenv("OPENAI_API_TOKEN")
 	apiURL := "https://api.openai.com/v1/chat/completions"
+	escapedMessage := strings.ReplaceAll(message, `"`, `\"`)
 
 	requestBody := []byte(fmt.Sprintf(`{
 		"model": "gpt-3.5-turbo",
@@ -44,10 +44,11 @@ func requestToChatGPT(message string) (*http.Request, error) {
 				"content": "%s"
 			}
 		]
-	}`, message))
+	}`, escapedMessage))
+
 	headers := map[string]string{
-		"Content-Type": "application/json",
-		"Authorization": "Bearer "+apiKey,
+		"Content-Type":  "application/json",
+		"Authorization": "Bearer " + apiKey,
 	}
 
 	req, err := createHTTPRequest(apiURL, "POST", requestBody, headers)
